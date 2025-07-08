@@ -5,10 +5,9 @@ import os
 import json
 import re
 
-# Đặt API key (nên lưu vào biến môi trường hoặc file config)
 API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
-    raise ValueError("Vui lòng đặt biến môi trường GEMINI_API_KEY!")
+    raise ValueError("GEMINI_API_KEY!!!!!!!!!!")
 genai.configure(api_key=API_KEY)
 
 
@@ -56,6 +55,20 @@ def gemini_generate_answer(percent: float, student_id: str = None) -> str:
             f"Xác suất rớt môn dự đoán là: {percent}%.\n"
             "Hãy trả lời cho người dùng bằng tiếng Việt, văn phong thân thiện, dễ hiểu. Đưa ra một lời khuyên hoặc kết luận nếu có thể."
         )
+    model = genai.GenerativeModel('gemini-2.0-flash')
+    response = model.generate_content(prompt)
+    return response.text.strip()
+def gemini_generate_answer_default(question: str) -> str:
+    """
+    Nhận đầu vào là câu hỏi của sinh viên, sinh câu trả lời tự nhiên cho client bằng Gemini.
+    """
+    prompt = (
+        f"Câu hỏi: {question}\n"
+        "Hãy trả lời cho người dùng bằng tiếng Việt, văn phong thân thiện, dễ hiểu"
+        "Bạn là một trợ lý ảo của Học Viện Công Nghệ Bưu Chính Viễn Thông, chuyên hỗ trợ sinh viên trong việc học tập và giải đáp thắc mắc về môn học."
+        "Bạn có nhiệm vụ chính là cung cấp xac suất rớt môn học dựa trên các thông tin về điểm số và quá trình học tập của sinh viên."
+        "Bạn có một model đứng sau để dự đoán xác suất rớt môn học của sinh viên dựa trên các thông tin về điểm số và quá trình học tập của họ."
+    )
     model = genai.GenerativeModel('gemini-2.0-flash')
     response = model.generate_content(prompt)
     return response.text.strip()

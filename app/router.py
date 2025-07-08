@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, send_from_directory
 from app.core import extract_student_id_from_question, get_student_info
 from app.models import predict_percent
-from app.gemini_service import gemini_generate_answer
+from app.gemini_service import gemini_generate_answer,gemini_generate_answer_default
 import os
 
 router = Blueprint('router', __name__)
@@ -25,7 +25,10 @@ def process():
         # Trích xuất mã sinh viên
         student_id = extract_student_id_from_question(question)
         if not student_id:
-            return jsonify({"error": "Không tìm thấy mã sinh viên trong câu hỏi"}), 404
+            answer = gemini_generate_answer_default(question)
+            return jsonify({
+                "answer": answer
+                })
         # Lấy thông tin sinh viên từ DB
         info = get_student_info(student_id)
         if not info:
